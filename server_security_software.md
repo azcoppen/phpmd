@@ -10,7 +10,7 @@ https://www.owasp.org/index.php/Main_Page
 ##Access Control
 Remote network access onto a server relies on being able to connect to a port offering a networked service, such as SSH, FTP, SMTP, DNS, etc. If a port cannot be connected to, an intrusion cannot take place. Use **nmap** to scan a system for open ports.
 
-````bash
+```bash
 apt-get install nmap
 nmap -v www.example.com
 ```
@@ -31,7 +31,7 @@ If possible, the only connections that can gain system access should be required
 
 https://openvpn.net/
 
-````bash
+```bash
 apt-get install bridge-utils openvpn easy-rsa
 nano /etc/network/interfaces
 nano /etc/sysctl.conf #enable forwarding
@@ -57,7 +57,7 @@ To limit and police rogue SSH connections, use **fail2ban**:
 
 http://www.fail2ban.org/wiki/index.php/Main_Page
 
-````bash
+```bash
 apt-get install fail2ban
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 nano /etc/fail2ban/jail.local
@@ -66,7 +66,7 @@ service fail2ban restart
 ####Shellshock
 Don't forget to test for it: CGI software (e.g. cPanel) uses bash.
 
-````bash
+```bash
 curl https://shellshocker.net/shellshock_test.sh | bash
 ```
 
@@ -82,7 +82,7 @@ To limit what specific programs can and cannot do, use **AppArmor**:
 
 http://wiki.apparmor.net/index.php/Main_Page
 
-````bash
+```bash
 apt-get install apparmor apparmor-profiles
 apparmor_status
 aa-complain /path/to/bin
@@ -136,7 +136,7 @@ The best known is **Snort**:
 
 https://www.snort.org/
 
-````bash
+```bash
 apt-get install snort
 mkdir /etc/snort
 mkdir /etc/snort/rules
@@ -165,7 +165,7 @@ A more friendly and automatic IDS is **OSSEC** (Open Source SECurity):
 
 http://www.ossec.net/
 
-````bash
+```bash
 deb http://ossec.alienvault.com/repos/apt/debian wheezy main
 apt-get install ossec-hids
 nano /var/ossec/etc/ossec.conf
@@ -186,7 +186,7 @@ Another approach is **Tripwire**, which works by creating encrypted signatures f
 
 http://sourceforge.net/projects/tripwire/
 
-````bash
+```bash
 apt-get install tripwire
 twadmin --create-polfile /etc/tripwire/twpol.txt
 tripwire --init
@@ -197,7 +197,7 @@ The oldest UNIX IDS and auditing tool is **Tiger**, which can be compiled from s
 
 http://www.nongnu.org/tiger/
 
-````bash
+```bash
 wget http://download.savannah.gnu.org/releases/tiger/tiger-3.2.3.tar.gz
 tar -xvf tiger-3.2.3.tar.gz && cd tiger* && ./configure && sudo make && sudo make install
 tiger
@@ -224,7 +224,7 @@ The first line of defense against a rootkit is **RKHunter**:
 
 http://rkhunter.sourceforge.net/
 
-````bash
+```bash
 apt-get install rkhunter
 rkhunter --propupd
 rkhunter --checkall
@@ -242,7 +242,7 @@ The 2nd main option is a shell script called **chkrootkit**:
 
 http://www.chkrootkit.org/
 
-````bash
+```bash
 apt-get install chkrootkit
 chkrootkit
 ```
@@ -250,14 +250,14 @@ chkrootkit
 ###Defensive HTTP
 The first and only point for server entry is weak security in a web application. The #1 target being **Wordpress** of course, closely followed by Joomla, Drupal, admin panels (cPanel, Plesk etc), and custom login panels. 
 
-````bash
+```bash
 ServerSignature Off # httpd.conf
 expose_php = Off # php.ini or hhvm/server.ini
 server_tokens off; # nginx.conf
 
 ```
 
-````http
+```http
 Strict-Transport-Security: max-age=60
 X-content-type-options: nosniff
 X-frame-options: SAMEORIGIN
@@ -266,7 +266,7 @@ X-xss-protection: 1; mode=block
 
 Never allow sensitive files to be served through an HTTP server, and be mindful of the default mime-type (*text/plain* in Apache).
 
-````js
+```js
   location ~ (config.php|app) {
     deny all;
   }
@@ -292,7 +292,7 @@ EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH
 http://en.wikipedia.org/wiki/Forward_secrecy#Perfect_forward_secrecy
 https://www.digicert.com/ssl-support/ssl-enabling-perfect-forward-secrecy.htm
 
-````bash
+```bash
 openssl version
 openssl genrsa -des3 -out default.key.enc 2048
 openssl req -new -key default.key.enc -out default.csr
@@ -303,10 +303,10 @@ openssl rsa -in default.key.enc -out default.key
 ####htpasswd
 The first step is to inspect the server's HTTP response headers to determine what software it is running.
 
-````bash
+```bash
 curl -X HEAD -i http://www.weareinteractive.ca
 ```
-````http
+```http
 HTTP/1.1 200 OK
 Connection: keep-alive
 Set-Cookie: __cfduid=d5ad319f86194ff91279c7d35fa66f9bb1416450282; expires=Fri, 20-Nov-15 02:24:42 GMT; path=/; domain=.weareinteractive.ca; HttpOnly
@@ -316,11 +316,11 @@ Server: cloudflare-nginx
 ```
 If you cannot inspect the headers, you cannot profile the target. Use **htpasswd** to require HTTP basic authentication on any area that is not public.
 
-````bash
+```bash
 apt-get install apache2-dev apache2-utils
 htpasswd -c .htpasswd newuser
 ```
-````js
+```js
     location ^~ /admin-route/ {
         auth_basic "Protected Area";
         auth_basic_user_file /path/to/.htpasswd;
@@ -334,7 +334,7 @@ Along with **mod_evasive**, the lion of all web application security is Apache's
 *Rulesets can be downloaded from **OWASP**.*
 
 Examples:
-````http
+```http
 GET /page.php?include=../../../../../../../../etc/passwd
 POST ?foo=bar&image_file=danger.php
 GET /login.php?username=admin'">DROP%20TABLE%20users--
@@ -354,7 +354,7 @@ https://www.modsecurity.org/
 https://github.com/SpiderLabs/ModSecurity
 https://www.owasp.org/index.php/Category:OWASP_ModSecurity_Core_Rule_Set_Project
 
-````bash
+```bash
 # Compile standalone module
 git clone https://github.com/SpiderLabs/ModSecurity.git mod_security
 cd mod_security
@@ -371,7 +371,7 @@ make
 make install
 ```
 
-````js
+```js
 location / {
   ModSecurityEnabled on;
   ModSecurityConfig modsecurity.conf;
@@ -417,7 +417,7 @@ Special mention needs to be made of the main Wordpress vulnerability scanner **w
 > WordPress administrators to asses the security posture of their
 > WordPress installations."
 
-````bash
+```bash
 git clone https://github.com/wpscanteam/wpscan.git
 cd wpscan
 sudo gem install bundler && bundle install --without test
@@ -438,7 +438,7 @@ http://codex.wordpress.org/Hardening_WordPress
 ####Logwatch
 Logwatch does what it says on the tin: it watches your logs, and sends you a daily report digest on them.
 
-````bash
+```bash
 apt-get install logwatch
 nano /usr/share/logwatch/default.conf/logwatch.conf
 ```
@@ -455,7 +455,7 @@ A nice fork of the Snort IDS is a set of 3 daemons that work together to form Ci
 
 http://cipherdyne.org/psad/
 
-````bash
+```bash
 apt-get install psad
 nano /etc/psad/psad.conf
 psad -R
@@ -471,7 +471,7 @@ After it's all gone wrong, the most comprehensive digger in the open-source worl
 
 http://www.sysdig.org/
 
-````bash
+```bash
 curl -s https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public | apt-key add -  
 curl -s -o /etc/apt/sources.list.d/draios.list http://download.draios.com/stable/deb/draios.list  
 apt-get update
