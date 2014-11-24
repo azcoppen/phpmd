@@ -23,7 +23,7 @@ username=bad&pass='">DROP%20TABLE%20users--
 ```
 
 ```http
-<!-- let's break the script to get an error print out -->
+<!-- let's break the script (fuzz it) to get an error print out -->
 GET /timeout.php?id=文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表قائمة النصقائمة النص文字列表文字列表文字列表文字列表文字列表文قائمة النصقائمة النص字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表文字列表قائمة النصقائمة النصقائمة النص HTTP/1.0 
 ```
 
@@ -57,7 +57,7 @@ move_uploaded_file($_FILES["file"]["tmp_name"], $destination);
 ```
 
 ```js
-/* Steal the PHP cookie from the logged in user over Wi-fi and copy it into our browser to take over their session */
+/* Steal the PHP cookie from the logged in user over Wi-fi and copy it into our browser to hijack their session */
 alert(document.cookie.match(/PHPSESSID=[^;]+/));
 ```
 ```bash
@@ -66,14 +66,15 @@ POST /publishable
 thingtoecho=<iframe src='xssattack.com/malware.pl'></iframe>&exec={json:{"executeme:true}} 
 ```
 
-If they are smart, they will be using **Tor** or a **VPN**. 
+If they are smart, they will be using **Tor** or a **VPN**. These are difficult to detect as they are just standard IP pools, but your code should have some degree of network awareness, or block suspect/blacklisted sources.
 
 The bad data will be sent through:
- - \$_GET
- - \$_POST
- - \$_REQUEST
- - \$_SERVER
- - phpinput://
+
+- $_GET 
+- $_POST 
+- $_REQUEST 
+- $_SERVER 
+- phpinput://
 
 **None of these attacks can get through if your application refuses to accept that input.**
 
@@ -151,9 +152,9 @@ if( $supplied_password === $dbrecord->pwd ) {
 }
 ```
 
-http://www.whatsmypass.com/the-top-500-worst-passwords-of-all-time
-http://www.hashkiller.co.uk/ (131BN decrypted hashes indexed)
-http://project-rainbowcrack.com/
+- http://www.whatsmypass.com/the-top-500-worst-passwords-of-all-time
+- http://www.hashkiller.co.uk/ (131BN decrypted hashes indexed)
+- http://project-rainbowcrack.com/
 
 ##If you can't get an HTTP response, you can't get in
 
@@ -207,9 +208,9 @@ GET /login.php?username=admin'">DROP%20TABLE%20users--
 > traffic monitoring and real-time analysis with little or no changes to
 > existing infrastructure."
 
-https://www.modsecurity.org/
-https://github.com/SpiderLabs/ModSecurity
-https://www.owasp.org/index.php/Category:OWASP_ModSecurity_Core_Rule_Set_Project
+- https://www.modsecurity.org/
+- https://github.com/SpiderLabs/ModSecurity
+- https://www.owasp.org/index.php/Category:OWASP_ModSecurity_Core_Rule_Set_Project
 
 ###Attack Tests
 The industry term for vulnerability discovery and legal "hacking" is **penetration testing**. It requires *written agreement* from a target, or you're going to jail.
@@ -258,9 +259,9 @@ ruby wpstools.rb --check-local-vulnerable-files /var/www/wordpress/
 ruby wpscan.rb --url www.target.com --enumerate
 ```
 
-http://wpscan.org/
-https://wpvulndb.com/
-http://codex.wordpress.org/Hardening_WordPress
+- http://wpscan.org/
+- https://wpvulndb.com/
+- http://codex.wordpress.org/Hardening_WordPress
 
 *For more comprehensive notes on hardening the waking security nightmare that is Wordpress, see the separate Wordpress security configuration guide.*
 
@@ -293,9 +294,9 @@ Content-Length: 142
 ---- User1 Message Body Not Shown ----
 ```
 
-http://wiki.wireshark.org/SampleCaptures
-http://www.wireless-nets.com/resources/tutorials/sniff_packets_wireshark.html
-http://www.slideshare.net/fozavci/hacking-sip-likeaboss22
+- http://wiki.wireshark.org/SampleCaptures
+- http://www.wireless-nets.com/resources/tutorials/sniff_packets_wireshark.html
+- http://www.slideshare.net/fozavci/hacking-sip-likeaboss22
 
 
 ##PHP isn't a helpfully secure language
@@ -375,7 +376,7 @@ then we end up with $supplied_nonce being an array. The function strcmp() will t
 All data that is a product, or subproduct, of user input is to **NOT be trusted**. They have to either be validated, using the correct methodology, or filtered, before considering them untainted.
 
 ####Super-globals are easily faked
-Super globals which are not to be trusted are \$_SERVER, \$_GET, \$_POST, \$_REQUEST, \$_FILES and \$_COOKIE. Not all data in \$_SERVER can be faked by the user, but a considerable amount in it can, particularly and specially everything that deals with HTTP headers (they start with HTTP_).
+Super globals which are not to be trusted are $_SERVER, $_GET, $_POST, $_REQUEST, $_FILES and $_COOKIE. Not all data in $_SERVER can be faked by the user, but a considerable amount in it can, particularly and specially everything that deals with HTTP headers (they start with HTTP_).
 
 ####File uploads
 Files received from a user pose various security threats, especially if other users can download these files. In particular:
@@ -397,7 +398,7 @@ However, the type is not determined by using heuristics that validate it, but by
    $fileContents = file_get_contents($_FILES['some_name']['tmp_name']);
    $mimeType = $finfo->buffer($fileContents);
 ```
-Where \$mimeType is a better checked file type. This uses more resources on the server, but can prevent the user from sending a dangerous file and fooling the code into trusting it as an image, which would normally be regarded as a safe file type.
+Where $mimeType is a better checked file type. This uses more resources on the server, but can prevent the user from sending a dangerous file and fooling the code into trusting it as an image, which would normally be regarded as a safe file type.
 
 ####$_REQUEST is bad
 This super global is not recommended since it includes not only POST and GET data, but also the cookies sent by the request. This can lead to confusion and makes your code prone to mistakes.
@@ -410,13 +411,13 @@ Since a single SQL Injection vulnerability permits the hacking of your website, 
 Never build up a string of SQL that includes user data, either by concatenation:
 ```php
 $sql = "SELECT * FROM users WHERE username = '" . $username . "';";
- ```
+```
 or interpolation, which is essentially the same:
 ```php
 $sql = "SELECT * FROM users WHERE username = '$username';";
- ```
+```
  
-If \$username has come from an untrusted source (and you must assume it has, since you cannot easily see that in source code), it could contain characters such as ' that will allow an attacker to execute very different queries than the one intended, including deleting your entire database etc.
+If $username has come from an untrusted source (and you must assume it has, since you cannot easily see that in source code), it could contain characters such as ' that will allow an attacker to execute very different queries than the one intended, including deleting your entire database etc.
 
 ####Escaping is not safe
 *mysql_real_escape_string* is not safe. Don't rely on it for your SQL injection prevention. When you use *mysql_real_escape_string* on every variable and then concat it to your query, you are bound to forget that at least once, and once is all it takes. You can't force yourself in any way to never forget. In addition, you have to ensure that you use quotes in the SQL as well, which is not a natural thing to do if you are assuming the data is numeric, for example. Instead use prepared statements, or equivalent APIs that always do the correct kind of SQL escaping for you. (Most ORMs will do this escaping, as well as creating the SQL for you).
@@ -512,7 +513,7 @@ Forging a POST request is a type of **replay attack**:
 > it, possibly as part of a masquerade attack by IP packet substitution
 > (such as stream cipher attack).
 
-http://en.wikipedia.org/wiki/Replay_attack
+- http://en.wikipedia.org/wiki/Replay_attack
 
 ##Sessions are hijacked through a single cookie
 
@@ -624,7 +625,7 @@ doc_root                = /path/DocumentRoot/PHP-scripts/
 open_basedir            = /path/DocumentRoot/PHP-scripts/
 include_path            = /path/PHP-pear/
 extension_dir           = /path/PHP-extensions/
-mime_magic.magicfile 	  = /path/PHP-magic.mime
+mime_magic.magicfile       = /path/PHP-magic.mime
 allow_url_fopen         = Off
 allow_url_include       = Off
 variables_order         = "GPSE"
